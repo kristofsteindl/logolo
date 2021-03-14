@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
+// TODO we should split Project into two (at least): a ProjectEntity and a ProjectInput
 public class Project {
 
     @Id
@@ -15,22 +16,24 @@ public class Project {
     private Long id;
     @NotBlank(message = "Project name is required")
     private String projectName;
-    @NotBlank(message = "Project Identifier is required")
+    @NotBlank(message = "Project key is required")
     @Size(min = 4, max = 5, message = "Please use 4 to 5 characters")
+    // TODO maybe we should do the duplicate checkin advance, by ourselves
+    //  BUT we can leave ths annotation as is, just to be sure that not to duplicate an identifier
     @Column(updatable = false, unique = true)
-    private String projectIdentifier;
+    private String projectKey;
     @NotBlank(message = "Project description is required")
     private String description;
     // TODO change fro mDate to LocalDate
     // TODO change name
     // TODO validate its purpuse
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date start_date;
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date end_date;
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date created_At;
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updated_At;
 
     public Project() {
@@ -62,12 +65,12 @@ public class Project {
         this.projectName = projectName;
     }
 
-    public String getProjectIdentifier() {
-        return projectIdentifier;
+    public String getProjectKey() {
+        return projectKey;
     }
 
-    public void setProjectIdentifier(String projectIdentifier) {
-        this.projectIdentifier = projectIdentifier;
+    public void setProjectKey(String projectIdentifier) {
+        this.projectKey = projectIdentifier;
     }
 
     public String getDescription() {
