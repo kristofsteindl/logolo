@@ -1,6 +1,7 @@
 package com.ksteindl.logolo.web;
 
 import com.ksteindl.logolo.domain.Project;
+import com.ksteindl.logolo.services.MapValidationErrorService;
 import com.ksteindl.logolo.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,12 +25,15 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private MapValidationErrorService mapValidationErrorService;
 
     // TODO we should introduce inputObject as @ResquestBody instead of Entity (very bad practice) or even instead of DTO (still bad practice)
     @PostMapping("")
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
-        if (result.hasErrors()) {
-            return new ResponseEntity<>(result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage)), HttpStatus.BAD_REQUEST);
+        ResponseEntity<?> errorMap = mapValidationErrorService.validate(result);
+        if (errorMap != null) {
+            return errorMap;
         }
         Project persisted = projectService.saveOrUpdateProject(project);
         return new ResponseEntity<Project>(persisted, HttpStatus.CREATED);
