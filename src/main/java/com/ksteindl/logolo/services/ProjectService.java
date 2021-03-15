@@ -1,13 +1,12 @@
 package com.ksteindl.logolo.services;
 
 import com.ksteindl.logolo.domain.Project;
+import com.ksteindl.logolo.domain.ProjectInput;
 import com.ksteindl.logolo.exceptions.ValidationException;
 import com.ksteindl.logolo.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -15,10 +14,9 @@ public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    // TODO maybe introduce DTO above Entity?
-    public Project saveProject(Project project) {
+    public Project saveProject(ProjectInput projectInput) {
         try {
-            project.setProjectKey(project.getProjectKey().toUpperCase());
+            Project project = convertToProject(projectInput);
             Project found = projectRepository.findByProjectKey(project.getProjectKey());
             if (found != null) {
                 throw new ValidationException("Project with key '" + found.getProjectKey() + "' already exists");
@@ -51,21 +49,26 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
-    public Project updateProject(Project project, Long id) {
-        Optional<Project> oldProjectOptional = projectRepository.findById(id);
-        if (!oldProjectOptional.isPresent()) {
-            throw new ValidationException("Cannot find project with id '" + id + "'");
-        }
-        Project oldProject = oldProjectOptional.get();
-        if (!oldProject.getProjectKey().equals(project.getProjectKey())) {
-            throw new ValidationException("The key of the project cannot changed (actual: " + oldProject.getProjectKey() + ", given: " + project.getProjectKey() + ")");
+    public Project updateProject(ProjectInput projectInput, Long id) {
+        Project oldProject = projectRepository.findById(id).orElseThrow(() -> new ValidationException("Cannot find project with id '" + id + "'"));
+        if (!oldProject.getProjectKey().equals(projectInput.getProjectKey())) {
+            throw new ValidationException("The key of the project cannot changed (actual: " + oldProject.getProjectKey() + ", given: " + projectInput.getProjectKey() + ")");
         }
         try {
-            project.setId(oldProject.getId());
-            return projectRepository.save(project);
+            Project toBeUpdated = convertToProject(projectInput);
+            toBeUpdated.setId(oldProject.getId());
+            return projectRepository.save(toBeUpdated);
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
             throw new ValidationException("During database persisting,  'DataIntegrityViolationException' was thrown. This means the previously defined validation rule(s) was/were violated.");
         }
+    }
+
+    private Project convertToProject(ProjectInput projectInput) {
+        Project project = new Project();
+        project.setProjectKey(projectInput.getProjectKey().toUpperCase());
+        project.setProjectName(projectInput.getProjectName());
+        project.setDescription((projectInput.getDescription()));
+        return project;
     }
 
 

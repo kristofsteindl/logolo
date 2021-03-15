@@ -18,13 +18,12 @@ public class Project {
     private String projectName;
     @NotBlank(message = "Project key is required")
     @Size(min = 4, max = 5, message = "Please use 4 to 5 characters")
-    // TODO maybe we should do the duplicate checkin advance, by ourselves
-    //  BUT we can leave ths annotation as is, just to be sure that not to duplicate an identifier
+    //  We do a duplicate check before persisting BUT we leave ths annotation, just double checking and for the sake of practicing
     @Column(updatable = false, unique = true)
     private String projectKey;
     @NotBlank(message = "Project description is required")
     private String description;
-    // TODO change fro mDate to LocalDate
+    // TODO change from Date to LocalDate
     // TODO change name
     // TODO validate its purpuse
     @JsonFormat(pattern = "yyyy-MM-dd")
