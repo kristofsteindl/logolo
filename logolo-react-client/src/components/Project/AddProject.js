@@ -7,15 +7,25 @@ class AddProject extends Component {
     constructor() {
         super()
         this.state = {
-            "projectName": "",
-            "projectKey": "",
-            "description": "",
-            "startDate": "",
-            "endDate": ""
+            projectName: "",
+            projectKey: "",
+            description: "",
+            startDate: "",
+            endDate: "",
+            errors: {}
         };
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
+    // lifecycle hooks
+    // TODO componentWillReceiveProps is depricated MUST refactor!!!
+    // https://medium.com/hackernoon/replacing-componentwillreceiveprops-with-getderivedstatefromprops-c3956f7ce607#:~:text=getDerivedStateFromProps%20is%20one%20of%20those,when%20it%20receives%20new%20props.
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.errors) {
+            this.setState({errors: nextProps.errors});
+        }
+    }
+
     onChange(e) {
         this.setState({[e.target.name]:e.target.value});
     }
@@ -31,8 +41,11 @@ class AddProject extends Component {
         this.props.createProject(newProject, this.props.history);
     }
     render() {
+        const {errors} = this.state
+        
         return (
             <div>
+            
                 <div className="project">
                     <div className="container">
                         <div className="row">
@@ -49,6 +62,7 @@ class AddProject extends Component {
                                             placeholder="Project Name" 
                                             onChange={this.onChange}
                                             />
+                                            <p>{errors.projectName}</p>
                                     </div>
                                     <div className="form-group">
                                         <input 
@@ -59,6 +73,7 @@ class AddProject extends Component {
                                             placeholder="Unique Project Key"
                                             onChange={this.onChange}
                                             />
+                                            <p>{errors.projectKey}</p>
                                     </div>
                         
                                     <div className="form-group">
@@ -68,6 +83,7 @@ class AddProject extends Component {
                                             className="form-control form-control-lg" 
                                             placeholder="Project Description"
                                             onChange={this.onChange}></textarea>
+                                            <p>{errors.description}</p>
                                     </div>
                                     <h6>Start Date</h6>
                                     <div className="form-group">
@@ -102,7 +118,12 @@ class AddProject extends Component {
 }
 
 AddProject.propTypes = {
-    createProject: PropTypes.func.isRequired
+    createProject: PropTypes.func.isRequired,
+    errors: PropTypes.object.isRequired
 }
 
-export default connect(null, {createProject}) (AddProject);
+const mapStateToProps = state => ({
+    errors: state.errors
+})
+
+export default connect(mapStateToProps, {createProject}) (AddProject);
