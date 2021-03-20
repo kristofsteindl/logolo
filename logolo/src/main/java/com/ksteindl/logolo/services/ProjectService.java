@@ -51,16 +51,20 @@ public class ProjectService {
 
     public Project updateProject(ProjectInput projectInput, Long id) {
         Project oldProject = projectRepository.findById(id).orElseThrow(() -> new ValidationException("Cannot find project with id '" + id + "'"));
-        if (!oldProject.getProjectKey().equals(projectInput.getProjectKey())) {
-            throw new ValidationException("The key of the project cannot changed (actual: " + oldProject.getProjectKey() + ", given: " + projectInput.getProjectKey() + ")");
-        }
         try {
-            Project toBeUpdated = convertToProject(projectInput);
-            toBeUpdated.setId(oldProject.getId());
-            return projectRepository.save(toBeUpdated);
+            updateOldProject(oldProject, projectInput);
+            oldProject.setId(oldProject.getId());
+            return projectRepository.save(oldProject);
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
             throw new ValidationException("During database persisting,  'DataIntegrityViolationException' was thrown. This means the previously defined validation rule(s) was/were violated.");
         }
+    }
+
+    private void updateOldProject(Project oldProject, ProjectInput projectInput) {
+        oldProject.setProjectName(projectInput.getProjectName());
+        oldProject.setDescription((projectInput.getDescription()));
+        oldProject.setStartDate(projectInput.getStartDate());
+        oldProject.setEndDate(projectInput.getEndDate());
     }
 
     private Project convertToProject(ProjectInput projectInput) {
