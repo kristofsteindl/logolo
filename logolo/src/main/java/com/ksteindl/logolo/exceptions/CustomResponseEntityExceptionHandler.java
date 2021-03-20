@@ -17,7 +17,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     @ExceptionHandler
     public final ResponseEntity<AbstractMap.SimpleEntry<String, String>> handleValidationException(ValidationException exception, WebRequest request) {
-        return new ResponseEntity(new AbstractMap.SimpleEntry("projectIdentifier", exception.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new AbstractMap.SimpleEntry("projectKey", exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
