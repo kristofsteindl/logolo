@@ -1,8 +1,10 @@
 package com.ksteindl.logolo.services;
 
+import com.ksteindl.logolo.domain.Backlog;
 import com.ksteindl.logolo.domain.Project;
 import com.ksteindl.logolo.domain.ProjectInput;
 import com.ksteindl.logolo.exceptions.ValidationException;
+import com.ksteindl.logolo.repositories.BacklogRepository;
 import com.ksteindl.logolo.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,13 +16,17 @@ public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public Project saveProject(ProjectInput projectInput) {
+    public Project createProject(ProjectInput projectInput) {
         try {
             Project project = convertToProject(projectInput);
             Project found = projectRepository.findByProjectKey(project.getProjectKey());
             if (found != null) {
                 throw new ValidationException("Project with key '" + found.getProjectKey() + "' already exists");
             }
+            Backlog backlog = new Backlog();
+            project.setBacklog(backlog);
+            backlog.setProject(project);
+            backlog.setProjectKey(project.getProjectKey());
             return projectRepository.save(project);
             // It is because the javax.persistence Entity validation. This is redundant, but double check is better then no check.
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
@@ -53,7 +59,6 @@ public class ProjectService {
         Project oldProject = projectRepository.findById(id).orElseThrow(() -> new ValidationException("Cannot find project with id '" + id + "'"));
         try {
             updateOldProject(oldProject, projectInput);
-            oldProject.setId(oldProject.getId());
             return projectRepository.save(oldProject);
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
             throw new ValidationException("During database persisting,  'DataIntegrityViolationException' was thrown. This means the previously defined validation rule(s) was/were violated.");

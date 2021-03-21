@@ -1,0 +1,5 @@
+Project.projectIdentifier=projectKey
+ProjectTask=Issue
+ProjectTask.PTSequence=Issue.issueSequence
+ProjectTask.projectIdentifier=Issue.projectKey
+

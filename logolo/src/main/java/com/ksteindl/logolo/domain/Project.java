@@ -3,6 +3,8 @@ package com.ksteindl.logolo.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Entity
@@ -17,30 +19,31 @@ public class Project {
     @Column(updatable = false, unique = true)
     private String projectKey;
     private String description;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    private Backlog backlog;
     // TODO change from Date to LocalDate
-    // TODO change name
     // TODO validate its purpuse
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private LocalDate startDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
+    private LocalDate endDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(updatable = false)
-    private Date createdAt;
+    private OffsetDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date updatedAt;
+    private OffsetDateTime updatedAt;
 
     public Project() {
     }
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = new Date();
+        this.createdAt = OffsetDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = new Date();
+        this.updatedAt = OffsetDateTime.now();
     }
 
     public Long getId() {
@@ -75,36 +78,44 @@ public class Project {
         this.description = description;
     }
 
-    public Date getStartDate() {
+    public Backlog getBacklog() {
+        return backlog;
+    }
+
+    public void setBacklog(Backlog backlog) {
+        this.backlog = backlog;
+    }
+
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date start_date) {
-        this.startDate = start_date;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date end_date) {
-        this.endDate = end_date;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
-    public Date getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date created_At) {
-        this.createdAt = created_At;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updated_At) {
-        this.updatedAt = updated_At;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
