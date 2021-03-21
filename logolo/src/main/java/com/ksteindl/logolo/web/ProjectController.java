@@ -47,7 +47,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@Valid @RequestBody ProjectInput projectInput, @PathVariable Long id, BindingResult result) {
+    public ResponseEntity<Project> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectInput projectInput, BindingResult result) {
         mapValidationErrorService.validate(result);
         Project updated = projectService.updateProject(projectInput, id);
         return new ResponseEntity(updated, HttpStatus.CREATED);

@@ -106,4 +106,14 @@ public class Project {
     public void setUpdatedAt(Date updated_At) {
         this.updatedAt = updated_At;
     }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", projectName='" + projectName + '\'' +
+                ", projectKey='" + projectKey + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
