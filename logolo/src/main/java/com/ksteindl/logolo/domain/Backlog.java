@@ -3,6 +3,8 @@ package com.ksteindl.logolo.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Backlog {
@@ -10,7 +12,7 @@ public class Backlog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer issueSequence = 0;
+    private int taskSequence = 0;
     // TODO seems reduntant
     private String projectKey;
 
@@ -21,8 +23,9 @@ public class Backlog {
     @JsonIgnore
     private Project project;
 
-    // OneToMany with the Issue-s
-
+    // OneToMany with the Task-s
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "backlog")
+    private List<Task> tasks = new ArrayList<>();
 
     public Backlog() {
     }
@@ -35,12 +38,12 @@ public class Backlog {
         this.id = id;
     }
 
-    public Integer getIssueSequence() {
-        return issueSequence;
+    public Integer getTaskSequence() {
+        return taskSequence;
     }
 
-    public void setIssueSequence(Integer issueSequence) {
-        this.issueSequence = issueSequence;
+    public void setTaskSequence(int taskSequence) {
+        this.taskSequence = taskSequence;
     }
 
     public String getProjectKey() {
@@ -57,5 +60,13 @@ public class Backlog {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 }

@@ -1,28 +1,23 @@
 package com.ksteindl.logolo.domain;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-public class IssueInput {
+public class TaskInput {
 
-    private String projectSequence;
+    @NotBlank(message = "Please include a project summary")
     private String summary;
+    @NotBlank(message = "Please include a valid project key")
+    private String projectKey;
     private String acceptanceCriteria;
     private String status;
     private Integer priority;
     private LocalDate dueDate;
-    private String projectKey;
 
-    public IssueInput() {
-    }
 
-    public String getProjectSequence() {
-        return projectSequence;
-    }
-
-    public void setProjectSequence(String projectSequence) {
-        this.projectSequence = projectSequence;
+    public TaskInput() {
     }
 
     public String getSummary() {
