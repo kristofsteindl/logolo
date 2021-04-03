@@ -3,6 +3,8 @@ package com.ksteindl.logolo.services;
 import com.ksteindl.logolo.domain.Backlog;
 import com.ksteindl.logolo.domain.Task;
 import com.ksteindl.logolo.domain.TaskInput;
+import com.ksteindl.logolo.exceptions.ProjectNotFoundException;
+import com.ksteindl.logolo.exceptions.ProjectValidationException;
 import com.ksteindl.logolo.repositories.BacklogRepository;
 import com.ksteindl.logolo.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class TaskService {
         // All Tasks to be added a specific project, which is not null, BL exitsts
         String projectKey = taskInput.getProjectKey();
         Backlog backlog = backlogRepository.findByProjectKey(projectKey);
+        if (backlog == null) {
+            throw new ProjectNotFoundException("Project key '" + projectKey.toUpperCase() + "' does not exist");
+        }
         // set BL to the Task
         task.setBacklog(backlog);
         // we want our project sequence like this PROS-1, PROS-2
