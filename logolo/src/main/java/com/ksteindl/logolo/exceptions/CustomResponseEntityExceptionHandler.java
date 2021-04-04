@@ -16,17 +16,12 @@ import java.util.Map;
 public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
-    public final ResponseEntity<AbstractMap.SimpleEntry<String, String>> handleProjectValidationException(ProjectValidationException exception, WebRequest request) {
-        return new ResponseEntity(new AbstractMap.SimpleEntry("projectKey", exception.getMessage()), HttpStatus.BAD_REQUEST);
+    public final ResponseEntity<AbstractMap.SimpleEntry<String, String>> handleProjectNotFoundException(ResourceNotFoundException exception, WebRequest request) {
+        return new ResponseEntity(new AbstractMap.SimpleEntry(exception.getKey() + "NotFound", exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    public final ResponseEntity<AbstractMap.SimpleEntry<String, String>> handleProjectNotFoundException(ProjectNotFoundException exception, WebRequest request) {
-        return new ResponseEntity(new AbstractMap.SimpleEntry("ProjectNotFound", exception.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public final ResponseEntity<Map<String, String>> handleFieldValidationException(FieldValidationException exception, WebRequest request) {
+    public final ResponseEntity<Map<String, String>> handleFieldValidationException(ValidationException exception, WebRequest request) {
         return new ResponseEntity(exception.getErrorMap(), HttpStatus.BAD_REQUEST);
     }
 

@@ -53,6 +53,5 @@ public class ProjectController {
         mapValidationErrorService.throwExceptionIfNotValid(result);
         Project updated = projectService.updateProject(projectInput, id);
         return new ResponseEntity(updated, HttpStatus.CREATED);
-
     }
 }

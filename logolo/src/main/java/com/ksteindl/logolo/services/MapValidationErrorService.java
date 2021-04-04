@@ -1,6 +1,6 @@
 package com.ksteindl.logolo.services;
 
-import com.ksteindl.logolo.exceptions.FieldValidationException;
+import com.ksteindl.logolo.exceptions.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -14,7 +14,7 @@ public class MapValidationErrorService {
     public void throwExceptionIfNotValid(BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errorMap = result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-            throw new FieldValidationException(errorMap);
+            throw new ValidationException(errorMap);
         }
     }
 }
