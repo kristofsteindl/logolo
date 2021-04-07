@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 class ProjectBoard extends Component {
     render() {
-        const projectKey = this.props.match.params;
+        const projectKey = this.props.match.params.projectKey
         return (
             <div className="container">
             <Link to={`/addTask/${projectKey}`} className="btn btn-primary mb-3">

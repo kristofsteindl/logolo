@@ -42,8 +42,8 @@ class AddProject extends Component {
         this.props.createProject(newProject, this.props.history);
     }
     render() {
-        const {errors} = this.state
-        
+        const {errors} = this.state;
+        console.log(this.props.match.params.projectKey);
         return (
             <div>
             
