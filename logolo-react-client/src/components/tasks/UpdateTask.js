@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import classnames from "classnames";
 import { getTask } from "../../actions/backlogActions";
+import { getProject } from '../../actions/projectActions';
 import PropTypes from "prop-types";
 
 class UpdateTask extends Component {
@@ -16,7 +17,10 @@ class UpdateTask extends Component {
       status: "",
       priority: "",
       dueDate: "",
-      projectKey: ""
+      projectKey: "",
+      project: {
+        projectName: ""
+     }
     };
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -25,9 +29,12 @@ class UpdateTask extends Component {
   componentDidMount() {
     const { projectKey, projectSequence } = this.props.match.params;
     this.props.getTask(projectKey, projectSequence, this.props.history);
+    this.props.getProject(projectKey, this.props.history);
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log("nextProps");
+      console.log(nextProps);
     const {
       id,
       projectSequence,
@@ -47,7 +54,8 @@ class UpdateTask extends Component {
       status,
       priority,
       dueDate,
-      projectKey
+      projectKey,
+      project: nextProps.project
     });
   }
 
@@ -84,7 +92,7 @@ class UpdateTask extends Component {
               </a>
               <h4 className="display-4 text-center">Update Project Task</h4>
               <p className="lead text-center">
-                Project Name: {this.state.projectKey} | Project Task ID:{" "}
+                Project Name: {this.state.project.projectName} | Project Task ID:{" "}
                 {this.state.projectSequence}{" "}
               </p>
               <form onSubmit={this.onSubmit}>
@@ -159,15 +167,17 @@ class UpdateTask extends Component {
 }
 
 UpdateTask.propTypes = {
-  getTask: PropTypes.func.isRequired,
-  task: PropTypes.object.isRequired
+    getTask: PropTypes.func.isRequired,
+    task: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  task: state.backlog.task
+    task: state.backlog.task,
+    project: state.project.project
 });
 
 export default connect(
   mapStateToProps,
-  { getTask }
+  { getTask, getProject }
 )(UpdateTask);
