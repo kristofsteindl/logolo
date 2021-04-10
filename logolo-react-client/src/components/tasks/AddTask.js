@@ -8,10 +8,7 @@ import PropTypes from "prop-types";
 class AddTask extends Component {
     constructor(props){
         super(props);
-        const {projectKey} = this.props.match.params;
-        console.log(this.props.match.params);
         this.state = {
-            projectKey: projectKey,
             summary: "",
             acceptanceCriteria: "",
             status: "",
@@ -38,17 +35,17 @@ class AddTask extends Component {
     onSubmit(e) {
         e.preventDefault();
         const taskInput = {
-            "projectKey": this.state.projectKey,
+            "projectKey": this.props.match.params.projectKey,
             "summary": this.state.summary,
             "acceptanceCriteria":this.state.acceptanceCriteria,
             "status": this.state.status,
             "priority": this.state.priority,
-            "dueDate": this.state.sdueDateummary,
-            "projectKey": this.state.projectKey
+            "dueDate": this.state.dueDateummary,
         };
         this.props.addTask(taskInput, this.props.history);
     }
     render() {
+        console.log(this);
         const projectKey = this.props.match.params;
         const {errors} = this.state;
         return (
@@ -65,12 +62,15 @@ class AddTask extends Component {
                             <div className="form-group">
                                 <input 
                                     type="text" 
-                                    className="form-control form-control-lg" 
+                                    className={classnames("form-control form-control-lg", {"is-invalid":errors.summary})} 
                                     name="summary" 
                                     placeholder="Project Task summary" 
                                     value={this.state.summary}
                                     onChange={this.onChange}
                                 />
+                                {
+                                    errors.summary && (<div className="invalid-feedback">{errors.summary}</div>)
+                                }
                             </div>
                             <div className="form-group">
                                 <textarea 

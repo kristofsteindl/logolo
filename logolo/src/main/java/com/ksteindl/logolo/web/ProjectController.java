@@ -2,7 +2,6 @@ package com.ksteindl.logolo.web;
 
 import com.ksteindl.logolo.domain.Project;
 import com.ksteindl.logolo.domain.ProjectInput;
-import com.ksteindl.logolo.domain.Task;
 import com.ksteindl.logolo.services.MapValidationErrorService;
 import com.ksteindl.logolo.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/project")
@@ -33,6 +32,7 @@ public class ProjectController {
 
     @GetMapping("/{projectKey}")
     public ResponseEntity<Project> getProjectByKey(@PathVariable String projectKey) {
+        ArrayList<Integer> a = new ArrayList<>(5);
         Project project = projectService.findProjectByKey(projectKey);
         return new ResponseEntity(project, HttpStatus.OK);
     }

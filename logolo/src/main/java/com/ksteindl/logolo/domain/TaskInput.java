@@ -11,7 +11,7 @@ public class TaskInput {
     private String summary;
     @NotBlank(message = "Please include a valid project key")
     private String projectKey;
-    private String acceptanceCriteria;
+    private String acceptanceCriteria = "";
     private String status;
     private Integer priority;
     private LocalDate dueDate;

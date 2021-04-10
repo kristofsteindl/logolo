@@ -21,8 +21,13 @@ class UpdateProject extends Component {
     }
     
     componentWillReceiveProps(nextProps){
+        console.log("componentWillReceiveProps")
+        console.log(nextProps.errors)
+        console.log(nextProps.project)
         if (nextProps.errors) {
             this.setState({errors: nextProps.errors});
+            console.log("whut?")
+            console.log(nextProps.errors)
         }
         const { id,
             projectName,

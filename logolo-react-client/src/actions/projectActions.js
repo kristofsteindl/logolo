@@ -40,7 +40,7 @@ export const getProject = (id, history) => async dispatch => {
 
 export const updateProject = (id, project, history) => async dispatch => {
     try {
-        const res = await axios.put(`/api/project/${id}`, project);
+        await axios.put(`/api/project/${id}`, project);
         history.push("/dashboard");
         dispatch({
             type:GET_ERRORS,

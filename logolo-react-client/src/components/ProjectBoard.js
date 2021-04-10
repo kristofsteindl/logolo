@@ -1,9 +1,45 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom";
+import Backlog from './Backlog';
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { getBacklog } from "../actions/backlogActions"; 
 
 class ProjectBoard extends Component {
+    constructor() {
+        super();
+        this.state = {
+            errors: {}
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.errors) {
+            this.setState({ errors: nextProps.errors})
+        }
+    }
+
+    componentDidMount() {
+        const { projectKey } = this.props.match.params;
+        this.props.getBacklog(projectKey);
+    }
+
+    getBoardContent() {
+        const tasks = this.props.backlog.tasks;
+        const errors = this.state.errors;
+        if (errors.projectNotFound) {
+            return (
+                <div className="alert alert-danger text-center" role="alert">{errors.projectNotFound}</div>
+            )
+        } else if (tasks.length < 1) {
+            return <div className="alert alert-info text-center" role="alert">No tasks on this board (in this project)</div>
+        } else {
+            return <Backlog tasks={tasks}/>
+        }
+    }
+
     render() {
-        const projectKey = this.props.match.params.projectKey
+        const projectKey = this.props.match.params.projectKey;
         return (
             <div className="container">
             <Link to={`/addTask/${projectKey}`} className="btn btn-primary mb-3">
@@ -11,64 +47,21 @@ class ProjectBoard extends Component {
             </Link>
             <br />
             <hr />
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-4">
-                        <div className="card text-center mb-2">
-                            <div className="card-header bg-secondary text-white">
-                                <h3>TO DO</h3>
-                            </div>
-                        </div>
-    
-                        <div className="card mb-1 bg-light">
-    
-                            <div className="card-header text-primary">
-                                ID: projectSequence -- Priority: priorityString
-                            </div>
-                            <div className="card-body bg-light">
-                                <h5 className="card-title">project_task.summary</h5>
-                                <p className="card-text text-truncate ">
-                                    project_task.acceptanceCriteria
-                                </p>
-                                <a href="" className="btn btn-primary">
-                                    View / Update
-                                </a>
-    
-                                <button className="btn btn-danger ml-4">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-    
-                       
-                    </div>
-                    <div className="col-md-4">
-                        <div className="card text-center mb-2">
-                            <div className="card-header bg-primary text-white">
-                                <h3>In Progress</h3>
-                            </div>
-                        </div>
-                        {//<!-- SAMPLE PROJECT TASK STARTS HERE -->
-                        //<!-- SAMPLE PROJECT TASK ENDS HERE -->
-                        }
-                    </div>
-                    <div className="col-md-4">
-                        <div className="card text-center mb-2">
-                            <div className="card-header bg-success text-white">
-                                <h3>Done</h3>
-                            </div>
-                        </div>
-                        {
-                        //<!-- SAMPLE PROJECT TASK STARTS HERE -->
-                        //<!-- SAMPLE PROJECT TASK ENDS HERE -->
-                    }
-                    </div>
-                </div>
-            </div>
-
+            {this.getBoardContent()}
         </div>
         );
     }
 }
 
-export default ProjectBoard;
+ProjectBoard.protoTypes = {
+    backlog: PropTypes.object.isRequired,
+    getBacklog: PropTypes.func.isRequired,
+    errors: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    backlog: state.backlog,
+    errors: state.errors
+});
+
+export default connect(mapStateToProps, {getBacklog})(ProjectBoard);
