@@ -5,10 +5,6 @@ export const addTask = (taskInput, history) => async dispatch => {
     try {
         await axios.post(`/api/backlog/`, taskInput);
         history.push(`/projectBoard/${taskInput.projectKey}`);
-        dispatch({
-            type:GET_ERRORS,
-            payload: {}
-        });
     } catch (error) {
         dispatch({
             type:GET_ERRORS,
@@ -41,5 +37,17 @@ export const getTask = (projectKey, projectSequence, history) => async dispatch 
         });
     } catch (error) {
         history.push("/dashboard");
+    }
+}
+
+export const updateTask = (projectKey, projectSequence, taskInput, history) => async dispatch => {
+    try {
+        await axios.put(`/api/backlog/${projectKey}/${projectSequence}`, taskInput);
+        history.push(`/projectBoard/${projectKey}`);
+    } catch (error) {
+        dispatch({
+            type:GET_ERRORS,
+            payload: error.response.data
+        });
     }
 }

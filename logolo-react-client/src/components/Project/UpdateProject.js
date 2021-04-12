@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { getProject, updateProject } from "../../actions/projectActions";
+import { clearErrors } from "../../actions/commonActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import classnames from "classnames";
@@ -18,6 +19,11 @@ class UpdateProject extends Component {
         }
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentWillUnmount() {
+        console.log("Component will unmount");
+        this.props.clearErrors();
     }
     
     componentWillReceiveProps(nextProps){
@@ -155,4 +161,4 @@ const mapStateToProps = state => ({
     errors: state.errors
 });
 
-export default connect(mapStateToProps, {getProject, updateProject})(UpdateProject);
+export default connect(mapStateToProps, {getProject, updateProject, clearErrors })(UpdateProject);
