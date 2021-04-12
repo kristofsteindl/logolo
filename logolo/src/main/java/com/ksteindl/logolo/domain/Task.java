@@ -20,7 +20,7 @@ public class Task {
     private Integer priority;
     private LocalDate dueDate;
     // ManyToOne with the backlog
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="backlog_id", updatable = false, nullable = false)
     @JsonIgnore
     private Backlog backlog;

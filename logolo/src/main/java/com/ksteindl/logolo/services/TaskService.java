@@ -112,7 +112,7 @@ public class TaskService {
     private void setStatusWithDefault(Task task, TaskInput taskInput) {
         String status = taskInput.getStatus();
         if (status == null || status.equals("")) {
-            task.setStatus("TO DO");
+            task.setStatus("TO_DO");
         } else {
             task.setStatus(status);
         }
