@@ -6,7 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "app_user")
@@ -24,7 +26,9 @@ public class User implements UserDetails {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
-    //OneToMany with the Project
+    // TODO isn't it ManyToMany?
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Project> projects = new ArrayList<>();
 
     public User() {
     }
@@ -118,4 +122,11 @@ public class User implements UserDetails {
         this.updatedAt = updatedAt;
     }
 
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
 }

@@ -20,10 +20,6 @@ public class Project {
     @Column(updatable = false, unique = true)
     private String projectKey;
     private String description;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
-    @JsonIgnore
-    private Backlog backlog;
-    // TODO change from Date to LocalDate
     // TODO validate its purpuse
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -34,6 +30,19 @@ public class Project {
     private OffsetDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private OffsetDateTime updatedAt;
+
+    private String projectLeader;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    @JsonIgnore
+    private Backlog backlog;
+
+    // TODO isn't it ManyToMany?
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
+
+
 
     public Project() {
     }
@@ -118,6 +127,22 @@ public class Project {
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getProjectLeader() {
+        return projectLeader;
+    }
+
+    public void setProjectLeader(String projectLeader) {
+        this.projectLeader = projectLeader;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

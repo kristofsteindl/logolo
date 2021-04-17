@@ -2,7 +2,8 @@ package com.ksteindl.logolo.web;
 
 import com.ksteindl.logolo.domain.User;
 import com.ksteindl.logolo.domain.UserInput;
-import com.ksteindl.logolo.security.JwtTokenProvider;
+import com.ksteindl.logolo.security.JwtAuthenticationFilter;
+import com.ksteindl.logolo.security.JwtProvider;
 import com.ksteindl.logolo.security.payload.JwtLoginResponse;
 import com.ksteindl.logolo.security.payload.LoginRequest;
 import com.ksteindl.logolo.services.MapValidationErrorService;
@@ -27,8 +28,6 @@ import javax.validation.Valid;
 @RequestMapping("/api/users")
 public class UserController {
 
-    public static final String TOKEN_PREFIX = "Bearer ";
-
     @Autowired
     private MapValidationErrorService mapValidationErrorService;
 
@@ -39,7 +38,7 @@ public class UserController {
     private UserInputValidator userInputValidator;
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private JwtProvider jwtProvider;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -63,7 +62,7 @@ public class UserController {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = TOKEN_PREFIX + jwtTokenProvider.generateToken(authentication);
+        String jwt = JwtAuthenticationFilter.TOKEN_PREFIX + jwtProvider.generateToken(authentication);
         return ResponseEntity.ok(new JwtLoginResponse(true, jwt));
 
     }
