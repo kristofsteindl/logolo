@@ -1,7 +1,7 @@
 package com.ksteindl.logolo.security;
 
 import com.google.gson.Gson;
-import com.ksteindl.logolo.exceptions.InvalidLoginResponse;
+import com.ksteindl.logolo.security.payload.InvalidLoginResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.ksteindl.logolo.exceptions;
+package com.ksteindl.logolo.security.payload;
 
 public class InvalidLoginResponse {
 
@@ -16,5 +16,13 @@ public class InvalidLoginResponse {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

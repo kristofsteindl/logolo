@@ -4,7 +4,6 @@ import com.ksteindl.logolo.domain.User;
 import com.ksteindl.logolo.domain.UserInput;
 import com.ksteindl.logolo.exceptions.ValidationException;
 import com.ksteindl.logolo.repositories.UserRepository;
-import com.ksteindl.logolo.validator.UserInputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,17 +25,13 @@ public class UserService {
     private User validateUserInput(UserInput userInput) {
         User user = new User();
         validateAndSetUsername(user, userInput.getUsername());
-
-        user.setPassword(userInput.getPassword());
         user.setFullName(userInput.getFullName());
         user.setPassword(bCryptPasswordEncoder.encode(userInput.getPassword()));
         return user;
     }
 
     private void validateAndSetUsername(User user, String username) {
-        if (userRepository.findByUsername(username) != null) {
-            throw new ValidationException("Username already exists");
-        }
+        userRepository.findByUsername(username).ifPresent( (foundUser) -> {throw new ValidationException("Username already exists");});
         user.setUsername(username);
     }
 }
