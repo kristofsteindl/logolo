@@ -3,9 +3,11 @@ package com.ksteindl.logolo.services;
 import com.ksteindl.logolo.domain.Backlog;
 import com.ksteindl.logolo.domain.Project;
 import com.ksteindl.logolo.domain.ProjectInput;
+import com.ksteindl.logolo.domain.User;
 import com.ksteindl.logolo.exceptions.ResourceNotFoundException;
 import com.ksteindl.logolo.exceptions.ValidationException;
 import com.ksteindl.logolo.repositories.ProjectRepository;
+import com.ksteindl.logolo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,13 @@ public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public Project createProject(ProjectInput projectInput) {
+    @Autowired
+    private UserRepository userRepository;
+
+    public Project createProject(ProjectInput projectInput, String principalName) {
         try {
             Project project = convertToProject(projectInput);
+            project.setProjectLeader(principalName);
             Project found = projectRepository.findByProjectKey(project.getProjectKey());
             if (found != null) {
                 throw new ValidationException("Project with key '" + found.getProjectKey() + "' already exists");
@@ -35,24 +41,23 @@ public class ProjectService {
     }
 
 
-    public Project findProjectByKey(String projectKey) {
+    public Project findProjectByKey(String projectKey, String username) {
         Project project = projectRepository.findByProjectKey(projectKey.toUpperCase());
         if (project == null) {
-            throw new ValidationException("Project key '" + projectKey.toUpperCase() + "' does not exist");
+            throw new ValidationException("projectNotFound", "Projectkey '" + projectKey.toUpperCase() + "' does not exist");
+        }
+        if (!project.getProjectLeader().equals(username)) {
+            throw new ValidationException("projectNotFound", "Project not found in your account");
         }
         return project;
     }
 
-    public Iterable<Project> findAllProjects() {
-        return projectRepository.findAll();
+    public Iterable<Project> findAllProjects(String username) {
+        return projectRepository.findAllByProjectLeader(username);
     }
 
-    public void deleteProjectByKey(String projectKey) {
-        Project project = projectRepository.findByProjectKey(projectKey.toUpperCase());
-        if (project == null) {
-            throw new ValidationException("Cannot delete project with key '" + projectKey + "'. This project does not exist.");
-        }
-        projectRepository.delete(project);
+    public void deleteProjectByKey(String projectKey, String username) {
+        projectRepository.delete(findProjectByKey(projectKey, username));
     }
 
     public Project updateProject(ProjectInput projectInput, Long id) {
