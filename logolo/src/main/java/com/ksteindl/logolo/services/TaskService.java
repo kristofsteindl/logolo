@@ -24,14 +24,16 @@ public class TaskService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public Task addTask(TaskInput taskInput) {
-        Task task = new Task();
+    @Autowired
+    private ProjectService projectService;
 
+    public Task addTask(TaskInput taskInput, String username) {
         String projectKey = taskInput.getProjectKey();
-        Backlog backlog = backlogRepository.findByProjectKey(projectKey);
+        Backlog backlog = projectService.findProjectByKey(taskInput.getProjectKey(), username).getBacklog();
         if (backlog == null) {
             throw new ResourceNotFoundException("project", "Project key '" + projectKey.toUpperCase() + "' does not exist");
         }
+        Task task = new Task();
         task.setBacklog(backlog);
         task.setProjectKey(projectKey);
 
@@ -47,28 +49,23 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public List<Task> findBacklogById(String projectKey) {
-        if (null == projectRepository.findByProjectKey(projectKey)) {
-            throw new ResourceNotFoundException("project", "Project is not found with key " + projectKey);
-        }
+    public List<Task> findBacklogById(String projectKey, String username) {
+        projectService.findProjectByKey(projectKey, username);
         return taskRepository.findByProjectKeyOrderByPriority(projectKey);
     }
 
 
-    public Task findTaskById(Long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("task", "Cannot find task with id '" + id + "'"));
+    public Task findTaskById(Long id, String username) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("task", "Cannot find task with id '" + id + "'"));
+        projectService.findProjectByKey(task.getProjectKey(), username);
+        return task;
+
     }
 
     // TODO - see TODO.md
-    public Task findTaskByProjectSequence(String projectKey, String projectSequence) {
-        Project project = projectRepository.findByProjectKey(projectKey);
-        if (null == project) {
-            throw new ResourceNotFoundException("project", "Project is not found with key " + projectKey);
-        }
-        Task task = taskRepository.findByProjectSequence(projectSequence);
-        if (task == null) {
-            throw new ResourceNotFoundException("task", "Task is not found with key " + projectSequence);
-        }
+    public Task findTaskByProjectSequence(String projectKey, String projectSequence, String username) {
+        Project project = projectService.findProjectByKey(projectKey, username);
+        Task task = taskRepository.findByProjectSequence(projectSequence).orElseThrow(() -> new ResourceNotFoundException("task", "Task is not found with key " + projectSequence));
         if (!task.getBacklog().getProjectKey().equals(project.getProjectKey())) {
             throw new ValidationException("Task " + projectSequence + " does not exist in project " + projectKey);
         }
@@ -76,24 +73,30 @@ public class TaskService {
     }
 
 
-    public Task updateTask(TaskInput taskInput, Long id) {
-        Task task = findTaskById(id);
+    public Task updateTask(TaskInput taskInput, Long id, String username) {
+        Task task = findTaskById(id, username);
+        if (!taskInput.getProjectKey().equals(task.getProjectKey())) {
+            throw new ValidationException("projectKey", "Changing projecKey at task update is not allowed (" + task.getProjectKey() + " -> " + taskInput.getProjectKey() + ")");
+        }
         return updateTask(task, taskInput);
     }
 
     // TODO - this method should be deleted
-    public Task updateTask(TaskInput taskInput, String projectKey, String projectSequence) {
-        Task task = findTaskByProjectSequence(projectKey, projectSequence);
+    public Task updateTask(TaskInput taskInput, String projectKey, String projectSequence, String username) {
+        Task task = findTaskByProjectSequence(projectKey, projectSequence, username);
+        if (!taskInput.getProjectKey().equals(task.getProjectKey())) {
+            throw new ValidationException("projectKey", "Changing projecKey at task update is not allowed (" + task.getProjectKey() + " -> " + taskInput.getProjectKey() + ")");
+        }
         return updateTask(task, taskInput);
     }
 
-    public void deleteTaskByProjectSequence(Long id) {
-        Task task = findTaskById(id);
+    public void deleteTaskByProjectSequence(Long id, String username) {
+        Task task = findTaskById(id, username);
         taskRepository.delete(task);
     }
 
-    public void deleteTaskByProjectSequence(String projectKey, String projectSequence) {
-        Task task = findTaskByProjectSequence(projectKey, projectSequence);
+    public void deleteTaskByProjectSequence(String projectKey, String projectSequence, String username) {
+        Task task = findTaskByProjectSequence(projectKey, projectSequence, username);
         taskRepository.delete(task);
     }
 

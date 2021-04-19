@@ -44,10 +44,10 @@ public class ProjectService {
     public Project findProjectByKey(String projectKey, String username) {
         Project project = projectRepository.findByProjectKey(projectKey.toUpperCase());
         if (project == null) {
-            throw new ValidationException("projectNotFound", "Projectkey '" + projectKey.toUpperCase() + "' does not exist");
+            throw new ResourceNotFoundException("project", "Projectkey '" + projectKey.toUpperCase() + "' does not exist");
         }
         if (!project.getProjectLeader().equals(username)) {
-            throw new ValidationException("projectNotFound", "Project not found in your account");
+            throw new ValidationException("project", "Project not found in your account");
         }
         return project;
     }
@@ -60,8 +60,11 @@ public class ProjectService {
         projectRepository.delete(findProjectByKey(projectKey, username));
     }
 
-    public Project updateProject(ProjectInput projectInput, Long id) {
+    public Project updateProject(ProjectInput projectInput, Long id, String username) {
         Project oldProject = projectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("project", "Cannot find project with id '" + id + "'"));
+        if(!oldProject.getProjectLeader().equals(username)) {
+            throw new ValidationException("project", "Project not found in your account");
+        }
         try {
             updateOldProject(oldProject, projectInput);
             return projectRepository.save(oldProject);
