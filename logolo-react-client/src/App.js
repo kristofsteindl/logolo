@@ -11,7 +11,12 @@ import store from './store';
 import ProjectBoard from './components/ProjectBoard';
 import AddTask from './components/tasks/AddTask';
 import UpdateTask from './components/tasks/UpdateTask';
+import Landing from './components/Layout/Landing';
+import Register from './components/userManagment/Register';
+import Login from './components/userManagment/Login';
+import { refreshAuthentication } from "./securityUtils/securityUtils";
 
+refreshAuthentication();
 
 function App() {
   return (
@@ -19,6 +24,18 @@ function App() {
       <Router>
         <div className="App">
           <Header />
+          {
+            //Public Routes
+          }
+
+          {
+            //Private Routes
+          }
+          <Route exact path="/" component={Landing} />
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/login" component={Login} />
+         
+
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/addProject" component={AddProject} />
           <Route exact path="/updateProject/:id" component={UpdateProject} />

@@ -13,7 +13,10 @@ public class MapValidationErrorService {
 
     public void throwExceptionIfNotValid(BindingResult result) {
         if (result.hasErrors()) {
-            Map<String, String> errorMap = result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+            Map<String, String> errorMap = result.getFieldErrors().stream().collect(Collectors.toMap(
+                    FieldError::getField,
+                    FieldError::getDefaultMessage,
+                    (errorMessage1, errorMessage2) -> errorMessage1 + ", " + errorMessage2));
             throw new ValidationException(errorMap);
         }
     }
