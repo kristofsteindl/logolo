@@ -1,7 +1,6 @@
 import axios from "axios";
-import { setJwt, refreshAuthentication } from "../securityUtils/securityUtils";
-import { GET_ERRORS, SET_CURRENT_USER } from "./types";
-import jwt_decode from "jwt-decode";
+import { setJwt, refreshTokenAndUser } from "../securityUtils/securityUtils";
+import { GET_ERRORS } from "./types";
 
 export const registerNewUser = (newUserInput, history) => async dispatch => {
     try {
@@ -20,13 +19,12 @@ export const login = (loginRequest, history) => async dispatch => {
         const result = await axios.post("/api/users/login", loginRequest);
         const token = result.data.token;
         localStorage.setItem("jwtToken", token);
-        refreshAuthentication();
+        refreshTokenAndUser();
     } catch (error) {
         dispatch({
             type:GET_ERRORS,
             payload: error.response.data
-        });
-        
+        });   
     }
-
 };
+

@@ -16,7 +16,7 @@ public class JwtProvider {
 
     Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
-    public static final Long EXPIRATION_TIME_IN_MILLIS = 240_000l;
+    public static final Long EXPIRATION_TIME_IN_MILLIS = 10_000l;
     public static final String SECRET = "SecretKeyToGenJWTs";
 
     // Generate the token

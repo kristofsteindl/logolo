@@ -1,8 +1,7 @@
 import { SET_CURRENT_USER } from "../actions/types";
 
 const initialState = {
-    user: {},
-    validToken: false
+    user: {}
 }
 
 export default function(state = initialState, action) {

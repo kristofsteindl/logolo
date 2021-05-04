@@ -14,9 +14,31 @@ import UpdateTask from './components/tasks/UpdateTask';
 import Landing from './components/Layout/Landing';
 import Register from './components/userManagment/Register';
 import Login from './components/userManagment/Login';
-import { refreshAuthentication } from "./securityUtils/securityUtils";
+import { setJwt, logout, refreshTokenAndUser } from "./securityUtils/securityUtils";
+import jwt_decode from "jwt-decode";
+import { SET_CURRENT_USER } from "./actions/types";
 
-refreshAuthentication();
+console.log("App.js code is running")
+const jwtToken = localStorage.jwtToken;
+if (jwtToken) {
+  setJwt(jwtToken);
+  const decodedToken = jwt_decode(jwtToken);
+  store.dispatch({
+      type: SET_CURRENT_USER,
+      payload: decodedToken
+  });
+
+  const currentTime = Date.now()/1000;
+  console.log(decodedToken);
+  console.log(decodedToken.exp);
+  console.log(currentTime);
+  if (decodedToken.exp < currentTime) {
+    console.log("token expired");  
+    store.dispatch(logout());
+    window.location.replace("/");
+  }
+}
+
 
 function App() {
   return (

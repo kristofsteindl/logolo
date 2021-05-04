@@ -11,20 +11,25 @@ export const setJwt = token => {
     }
 }
 
-export const refreshAuthentication = () => {
+export const refreshTokenAndUser = () => {
     const jwtToken = localStorage.jwtToken;
-
     if (jwtToken) {
-    setJwt(jwtToken);
-    const decoded = jwt_decode(jwtToken);
-    store.dispatch({
+        setJwt(jwtToken);
+        const decodedToken = jwt_decode(jwtToken);
+        store.dispatch({
+            type: SET_CURRENT_USER,
+            payload: decodedToken
+        });
+        return decodedToken;
+    }
+}
+
+
+export const logout = () => dispatch => {
+    localStorage.removeItem("jwtToken");
+    setJwt(false);
+    dispatch({
         type: SET_CURRENT_USER,
-        payload: decoded
+        payload: {}
     });
-    const currentTime = Date.now()/1000;
-    if (decoded.exp < currentTime) {
-        // handle logout
-        // window.location.href="/";
-    }
-    }
 }

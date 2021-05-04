@@ -1,8 +1,30 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
 class Landing extends Component {
+    
     render() {
+        const user = this.props.security.user;
+        const loggedIn = user && JSON.stringify(user) !== '{}';
+        const loggedInOptions = (
+            <div>
+                <Link to="/logout" className="btn btn-lg btn-secondary mr-2">
+                    Logout
+                </Link>
+            </div>
+        );
+        const loggedOutOptions = (
+            <div>
+                <Link className="btn btn-lg btn-primary mr-2" to="/register">
+                    Sign Up
+                </Link>
+                <Link to="/login" className="btn btn-lg btn-secondary mr-2">
+                    Login
+                </Link>
+            </div>
+        );
         return (
             <div className="landing">
                 <div className="light-overlay landing-inner text-dark">
@@ -14,13 +36,8 @@ class Landing extends Component {
                                     Create your account to join active projects or start you own
                                 </p>
                                 <hr />
+                                {loggedIn ? loggedInOptions : loggedOutOptions}
 
-                                <Link className="btn btn-lg btn-primary mr-2" to="/register">
-                                    Sign Up
-                                </Link>
-                                <a href="login.html" className="btn btn-lg btn-secondary mr-2">
-                                    Login
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -30,4 +47,12 @@ class Landing extends Component {
     }
 }
 
-export default Landing; 
+Landing.propTypes = {
+    security: PropTypes.object.isRequired
+}
+
+const mapStateToProps = state => ({
+    security: state.security
+});
+
+export default connect(mapStateToProps) (Landing); 
