@@ -20,6 +20,7 @@ export const refreshTokenAndUser = () => {
             type: SET_CURRENT_USER,
             payload: decodedToken
         });
+        console.log("returned");
         return decodedToken;
     }
 }

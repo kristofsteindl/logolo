@@ -17,9 +17,8 @@ class Login extends Component {
     }
 
     componentDidMount(){
-        const user = this.props.security.user;
-        if(user &&  JSON.stringify(user) !== '{}') {
-            this.props.history.push("/dashboard")
+        if (this.props.security.validToken) {
+            this.props.history.push("/dashboard");
         }
     }
 
@@ -28,9 +27,8 @@ class Login extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-        const user = nextProps.security.user;
-        if (user && JSON.stringify(user) !== '{}') {
-            this.props.history.push("/dashboard");
+        if (nextProps.security.validToken) {
+            this.props.history.push("/dashboard")
         }
         this.setState({errors: nextProps.errors});
     }

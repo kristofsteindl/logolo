@@ -45,7 +45,6 @@ class AddTask extends Component {
         this.props.addTask(taskInput, this.props.history);
     }
     render() {
-        console.log(this);
         const projectKey = this.props.match.params;
         const {errors} = this.state;
         return (

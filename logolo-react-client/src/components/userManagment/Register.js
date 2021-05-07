@@ -21,7 +21,7 @@ class Register extends Component {
     }
 
     componentDidMount(){
-        if(this.props.security.user) {
+        if(this.props.security.validToken) {
             this.props.history.push("/")
         }
     }

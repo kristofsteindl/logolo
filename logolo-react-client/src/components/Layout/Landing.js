@@ -17,7 +17,7 @@ class Landing extends Component {
         );
         const loggedOutOptions = (
             <div>
-                <Link className="btn btn-lg btn-primary mr-2" to="/register">
+                <Link to="/register" className="btn btn-lg btn-primary mr-2">
                     Sign Up
                 </Link>
                 <Link to="/login" className="btn btn-lg btn-secondary mr-2">

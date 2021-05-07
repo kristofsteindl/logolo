@@ -3,7 +3,7 @@ import './App.css';
 import Dashboard from './components/Dashboard';
 import Header from './components/Layout/Header';
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Route} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import AddProject from "./components/Project/AddProject";
 import UpdateProject from './components/Project/UpdateProject';
 import {Provider} from "react-redux";
@@ -17,8 +17,8 @@ import Login from './components/userManagment/Login';
 import { setJwt, logout, refreshTokenAndUser } from "./securityUtils/securityUtils";
 import jwt_decode from "jwt-decode";
 import { SET_CURRENT_USER } from "./actions/types";
+import SecuredRoute from './securityUtils/SecuredRoute';
 
-console.log("App.js code is running")
 const jwtToken = localStorage.jwtToken;
 if (jwtToken) {
   setJwt(jwtToken);
@@ -29,9 +29,6 @@ if (jwtToken) {
   });
 
   const currentTime = Date.now()/1000;
-  console.log(decodedToken);
-  console.log(decodedToken.exp);
-  console.log(currentTime);
   if (decodedToken.exp < currentTime) {
     console.log("token expired");  
     store.dispatch(logout());
@@ -57,13 +54,15 @@ function App() {
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
          
+          <Switch>
+            <SecuredRoute exact path="/dashboard" component={Dashboard} />
+            <SecuredRoute exact path="/addProject" component={AddProject} />
+            <SecuredRoute exact path="/updateProject/:id" component={UpdateProject} />
+            <SecuredRoute exact path="/projectBoard/:projectKey" component={ProjectBoard} />
+            <SecuredRoute exact path="/addTask/:projectKey" component={AddTask} />
+            <SecuredRoute exact path="/updateTask/:projectKey/:projectSequence" component={UpdateTask} />
+          </Switch>
 
-          <Route exact path="/dashboard" component={Dashboard} />
-          <Route exact path="/addProject" component={AddProject} />
-          <Route exact path="/updateProject/:id" component={UpdateProject} />
-          <Route exact path="/projectBoard/:projectKey" component={ProjectBoard} />
-          <Route exact path="/addTask/:projectKey" component={AddTask} />
-          <Route exact path="/updateTask/:projectKey/:projectSequence" component={UpdateTask} />
         </div>
       </Router>
     </Provider>
