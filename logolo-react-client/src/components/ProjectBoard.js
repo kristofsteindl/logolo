@@ -4,6 +4,7 @@ import Backlog from './Backlog';
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getBacklog } from "../actions/backlogActions"; 
+import { clearErrors } from '../actions/commonActions';
 
 class ProjectBoard extends Component {
     constructor() {
@@ -24,12 +25,18 @@ class ProjectBoard extends Component {
         this.props.getBacklog(projectKey);
     }
 
+    componentWillUnmount() {
+        console.log("Component will unmount");
+        this.props.clearErrors();
+    }
+
     getBoardContent() {
         const tasks = this.props.backlog.tasks;
         const errors = this.state.errors;
-        if (errors.projectNotFound) {
+        
+        if (errors[Object.keys(errors)[0]]) {
             return (
-                <div className="alert alert-danger text-center" role="alert">{errors.projectNotFound}</div>
+                <div className="alert alert-danger text-center" role="alert">{errors[Object.keys(errors)[0]]}</div>
             )
         } else if (tasks.length < 1) {
             return <div className="alert alert-info text-center" role="alert">No tasks on this board (in this project)</div>
@@ -56,6 +63,7 @@ class ProjectBoard extends Component {
 ProjectBoard.protoTypes = {
     backlog: PropTypes.object.isRequired,
     getBacklog: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired,
     errors: PropTypes.object.isRequired
 };
 
@@ -64,4 +72,4 @@ const mapStateToProps = state => ({
     errors: state.errors
 });
 
-export default connect(mapStateToProps, {getBacklog})(ProjectBoard);
+export default connect(mapStateToProps, {getBacklog, clearErrors})(ProjectBoard);

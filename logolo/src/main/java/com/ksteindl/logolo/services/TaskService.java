@@ -103,7 +103,9 @@ public class TaskService {
     private Task updateTask(Task task, TaskInput taskInput) {
         try {
             task.setSummary(taskInput.getSummary());
+            task.setDueDate(taskInput.getDueDate());
             setPriorityWithDefault(task, taskInput);
+            setStatusWithDefault(task, taskInput);
             setStatusWithDefault(task, taskInput);
             return taskRepository.save(task);
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {

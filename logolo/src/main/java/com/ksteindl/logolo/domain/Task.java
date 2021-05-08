@@ -1,5 +1,6 @@
 package com.ksteindl.logolo.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ public class Task {
     private String acceptanceCriteria;
     private String status;
     private Integer priority;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
     // ManyToOne with the backlog
     @ManyToOne(fetch = FetchType.EAGER)
@@ -26,7 +28,9 @@ public class Task {
     private Backlog backlog;
     @Column(updatable = false)
     private String projectKey;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private OffsetDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private OffsetDateTime updatedAt;
 
     public Task() {
